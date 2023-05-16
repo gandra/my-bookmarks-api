@@ -6,6 +6,7 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
+	app.Post("/api/bookmarks", bookmarks.CreateBookmark)
 	app.Get("/api/bookmarks", bookmarks.SearchBookmarks)
 	app.Get("/api/bookmarks/:id", bookmarks.GetBookmark)
 }

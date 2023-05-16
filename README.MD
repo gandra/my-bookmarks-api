@@ -15,7 +15,7 @@ docker container start bookmarksdb
 
 ### Remove cpntainer
 ```
-docker rm bookinggormdb
+docker rm bookmarksdb
 ```
 
 ## Github 
