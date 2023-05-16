@@ -1,9 +1,13 @@
 package bookmarks
 
-import "strings"
+import (
+	"github.com/gandra/my-bookmarks/domain"
+	"strings"
+)
 
 type BookmarkSearchDto struct {
-	Criteria string
+	domain.Pagination
+	Criteria string `json:"criteria"`
 }
 
 func (s *BookmarkSearchDto) GetCriteriaLike() string {
@@ -12,4 +16,9 @@ func (s *BookmarkSearchDto) GetCriteriaLike() string {
 		return ""
 	}
 	return "%" + s.Criteria + "%"
+}
+
+type BookmarksDto struct {
+	Data []BookmarkDto `json:"data"`
+	domain.Pagination
 }

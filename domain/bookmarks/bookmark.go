@@ -9,4 +9,7 @@ type Bookmark struct {
 	Link  string `json:"link"`
 }
 
-type Bookmarks []Bookmark
+type Bookmarks struct {
+	Data []Bookmark
+	domain.Pagination
+}

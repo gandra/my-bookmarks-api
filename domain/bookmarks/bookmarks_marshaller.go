@@ -1,6 +1,8 @@
 package bookmarks
 
-import "github.com/gandra/my-bookmarks/utils/date_utils"
+import (
+	"github.com/gandra/my-bookmarks/utils/date_utils"
+)
 
 type BookmarkDto struct {
 	Id        string `json:"id"`
@@ -12,11 +14,14 @@ type BookmarkDto struct {
 }
 
 func (b Bookmarks) Marshall() interface{} {
-	result := make([]interface{}, len(b))
-	for i, bookmark := range b {
-		result[i] = bookmark.Marshall()
+	data := make([]BookmarkDto, len(b.Data))
+	for i, bookmark := range b.Data {
+		data[i] = bookmark.Marshall().(BookmarkDto)
 	}
-	return result
+	return BookmarksDto{
+		Data:       data,
+		Pagination: b.Pagination,
+	}
 }
 
 func (b *Bookmark) Marshall() interface{} {

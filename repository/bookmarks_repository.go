@@ -6,16 +6,11 @@ import (
 	"strings"
 )
 
-const (
-	querySearchBookmarks = "SELECT id, title, body, link, created_at, updated_at where title"
-)
-
 var (
 	BookmarksRepository bookmarksRepositoryInterface = &bookmarksRepository{}
 )
 
 type bookmarksRepository struct {
-	//mutex sync.Mutex
 }
 
 type bookmarksRepositoryInterface interface {
@@ -25,9 +20,6 @@ type bookmarksRepositoryInterface interface {
 }
 
 func (r *bookmarksRepository) GetById(id string) (*bookmarks.Bookmark, error) {
-	//r.mutex.Lock()
-	//defer r.mutex.Unlock()
-
 	var bookmark bookmarks.Bookmark
 
 	err := db.Client.Find(&bookmark, id).Error
@@ -38,9 +30,6 @@ func (r *bookmarksRepository) GetById(id string) (*bookmarks.Bookmark, error) {
 }
 
 func (r *bookmarksRepository) Create(bookmark *bookmarks.Bookmark) error {
-	//r.mutex.Lock()
-	//defer r.mutex.Unlock()
-
 	return db.Client.Create(bookmark).Error
 }
 
@@ -53,8 +42,13 @@ func (r *bookmarksRepository) Search(searchDto bookmarks.BookmarkSearchDto) (*bo
 		fields = append(fields, "lower(title) like ?")
 		values = append(values, strings.ToLower(searchDto.GetCriteriaLike()))
 	}
-	err := db.Client.Where(strings.Join(fields, " AND "), values...).Find(&bookmarks).Error
-	//err := db.Client.Where("title like ?", searchDto.GetCriteriaLike()).Find(&bookmarks).Error
+
+	pagination := searchDto.Pagination
+	bookmarks.Pagination = pagination
+	offset := (pagination.Page - 1) * pagination.Limit
+	queryBuider := db.Client.Limit(pagination.Limit).Offset(offset).Order(pagination.GetSortOrder())
+	err := queryBuider.Where(strings.Join(fields, " AND "), values...).Find(&bookmarks.Data).Error
+	//err := db.Client.Where(strings.Join(fields, " AND "), values...).Find(&bookmarks.Data).Error
 	if err != nil {
 		return nil, err
 	}

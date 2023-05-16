@@ -7,6 +7,7 @@ import (
 	"github.com/gandra/my-bookmarks/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	logger2 "gorm.io/gorm/logger"
 	"os"
 )
 
@@ -33,7 +34,10 @@ func InitDatabase() {
 
 	var err error
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432", host, username, password, schema)
-	db.Client, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	config := gorm.Config{
+		Logger: logger2.Default.LogMode(logger2.Warn),
+	}
+	db.Client, err = gorm.Open(postgres.Open(dsn), &config)
 	if err != nil {
 		fmt.Println(err)
 		panic("Failed to connect to database!")
